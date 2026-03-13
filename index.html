@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f5ede0">
+<title>Adilla Yoga</title>
+<style>
+:root{--cream:#f7f0e6;--cream2:#ede3d3;--parchment:#d4c4a8;--terra:#b5633a;--terra2:#8b4a2a;--sage:#5a7a5c;--sage2:#3d5e40;--deep:#2c2416;--muted:#8a7a6a;--gold:#c4993a;--serif:Georgia,'Times New Roman',serif;--sans:-apple-system,'Helvetica Neue',Arial,sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:var(--sans);background:var(--cream);color:var(--deep);min-height:100%;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,20px)}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 10%,rgba(181,99,58,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 90% 80%,rgba(90,122,92,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* ===== PROGRAM SELECTION SCREEN ===== */
+.program-select-screen{position:fixed;inset:0;background:var(--cream);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:0 0 40px}
+.program-select-screen.hidden{display:none}
+.select-header{text-align:center;padding:12px 24px 10px;width:100%}
+.select-lotus{display:flex;justify-content:center;margin-bottom:8px}
+.select-lotus svg{width:58px;height:58px;animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.07);opacity:1}}
+.select-studio{font-size:.65rem;font-weight:600;letter-spacing:.3em;color:var(--terra);text-transform:uppercase;margin-bottom:8px}
+.select-title{font-family:var(--serif);font-size:2.2rem;color:var(--deep);line-height:1.2;margin-bottom:2px}
+.select-sub{font-size:.75rem;color:var(--muted);font-style:italic;letter-spacing:.04em}
+.select-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--parchment),transparent);margin:10px auto 16px}
+.select-label{font-size:.62rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:10px;text-align:center}
+.program-cards{display:flex;flex-direction:column;gap:14px;padding:0 20px;width:100%;max-width:420px}
+.prog-card{background:rgba(255,255,255,.75);border:1.5px solid rgba(212,196,168,.5);border-radius:20px;padding:20px 20px 18px;cursor:pointer;transition:all .22s cubic-bezier(.34,1.2,.64,1);box-shadow:0 2px 12px rgba(44,36,22,.06);-webkit-tap-highlight-color:transparent;user-select:none;animation:fadeUp .4s ease both}
+.prog-card:nth-child(1){animation-delay:.05s}
+.prog-card:nth-child(2){animation-delay:.12s}
+.prog-card:nth-child(3){animation-delay:.19s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.prog-card:active{transform:scale(.975)}
+.prog-card.easy-a{border-color:rgba(90,122,92,.3)}
+.prog-card.easy-b{border-color:rgba(196,153,58,.3)}
+.prog-card.advanced{border-color:rgba(181,99,58,.3)}
+.prog-card-top{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.prog-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.easy-a .prog-icon{background:rgba(90,122,92,.12)}
+.easy-b .prog-icon{background:rgba(196,153,58,.12)}
+.advanced .prog-icon{background:rgba(181,99,58,.1)}
+.prog-card-info{flex:1}
+.prog-level{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:3px}
+.easy-a .prog-level{color:var(--sage)}
+.easy-b .prog-level{color:var(--gold)}
+.advanced .prog-level{color:var(--terra)}
+.prog-name{font-family:var(--serif);font-size:1.2rem;color:var(--deep);line-height:1.2}
+.prog-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.prog-pill{font-size:.6rem;background:var(--cream2);border-radius:8px;padding:2px 8px;color:var(--muted);letter-spacing:.05em;font-weight:600;text-transform:uppercase}
+.prog-desc{font-size:.72rem;color:var(--muted);line-height:1.6;font-style:italic}
+.prog-arrow{display:flex;align-items:center;justify-content:flex-end;margin-top:10px}
+.prog-arrow-btn{background:var(--terra);border:none;border-radius:10px;padding:8px 16px;font-family:var(--sans);font-size:.65rem;font-weight:700;letter-spacing:.12em;color:white;cursor:pointer;text-transform:uppercase;transition:background .2s}
+.easy-a .prog-arrow-btn{background:var(--sage)}
+.easy-b .prog-arrow-btn{background:var(--gold)}
+.advanced .prog-arrow-btn{background:var(--terra)}
+.select-footer{margin-top:24px;text-align:center;padding:0 24px}
+.select-footer-name{font-family:var(--serif);font-size:.9rem;color:var(--terra);font-style:italic}
+.select-footer-sub{font-size:.62rem;color:var(--muted);letter-spacing:.08em;margin-top:2px}
+
+/* ===== PROGRAM VIEW WRAPPER ===== */
+.program-view{display:none}
+.program-view.active{display:block}
+
+/* ===== BACK BUTTON ===== */
+.back-bar{display:flex;align-items:center;gap:10px;padding:8px 20px 0;position:relative;z-index:10}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.1em;color:var(--muted);cursor:pointer;text-transform:uppercase;-webkit-tap-highlight-color:transparent;padding:4px 0}
+.back-btn:active{color:var(--terra)}
+.back-btn svg{width:16px;height:16px}
+
+/* ===== ORIGINAL STYLES ===== */
+.app-header{position:relative;z-index:10;padding:8px 24px 8px;text-align:center}
+.header-lotus{display:flex;justify-content:center;margin-bottom:6px}
+.header-lotus svg{width:54px;height:54px;animation:breathe 4s ease-in-out infinite}
+.studio-name{font-size:.65rem;font-weight:600;letter-spacing:.3em;color:var(--terra);text-transform:uppercase;margin-bottom:2px}
+.class-title{font-family:var(--serif);font-size:2.1rem;font-weight:normal;color:var(--deep);line-height:1.2;margin-bottom:2px}
+.class-theme{font-size:.75rem;color:var(--muted);letter-spacing:.06em;font-style:italic}
+.header-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--parchment),transparent);margin:8px auto 0}
+.meta-row{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:6px 24px 8px;position:relative;z-index:10}
+.meta-pill{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.75);border:1px solid var(--cream2);border-radius:20px;padding:5px 12px;font-size:.7rem;color:var(--muted)}
+.meta-pill b{color:var(--terra);font-weight:600}
+.progress-wrap{position:sticky;top:0;z-index:100;background:rgba(247,240,230,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:10px 20px;border-bottom:1px solid rgba(212,196,168,.4)}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-text{font-size:.65rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;font-weight:600}
+.progress-pct{font-family:var(--serif);font-size:.9rem;color:var(--terra)}
+.progress-track{height:3px;background:var(--cream2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--terra),var(--gold));border-radius:2px;width:0%;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.content{position:relative;z-index:1;padding:12px 16px 32px}
+.section-card{background:rgba(255,255,255,.6);border:1px solid rgba(212,196,168,.5);border-radius:16px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px rgba(44,36,22,.06);transition:box-shadow .3s,border-color .3s;animation:fadeUp .4s ease both}
+.section-card:nth-child(1){animation-delay:.05s}.section-card:nth-child(2){animation-delay:.1s}.section-card:nth-child(3){animation-delay:.15s}.section-card:nth-child(4){animation-delay:.2s}.section-card:nth-child(5){animation-delay:.25s}.section-card:nth-child(6){animation-delay:.3s}.section-card:nth-child(7){animation-delay:.35s}
+.section-card.completed{background:rgba(90,122,92,.08);border-color:rgba(90,122,92,.3)}
+.section-card.active{box-shadow:0 4px 20px rgba(181,99,58,.14);border-color:rgba(181,99,58,.35)}
+.section-header{display:flex;align-items:center;gap:13px;padding:15px 16px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.section-header:active{background:rgba(181,99,58,.05)}
+.section-num{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--parchment);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1rem;color:var(--muted);flex-shrink:0;transition:all .3s;background:white}
+.section-card.completed .section-num{background:var(--sage);border-color:var(--sage);color:white}
+.section-card.active .section-num{background:var(--terra);border-color:var(--terra);color:white}
+.section-info{flex:1}
+.section-name{font-family:var(--serif);font-size:1.05rem;color:var(--deep);line-height:1.2}
+.section-card.completed .section-name{color:var(--sage2)}
+.section-card.active .section-name{color:var(--terra2)}
+.section-meta{display:flex;gap:8px;margin-top:3px;flex-wrap:wrap}
+.section-tag{font-size:.6rem;background:var(--cream2);border-radius:8px;padding:2px 7px;color:var(--muted);letter-spacing:.06em;font-weight:600;text-transform:uppercase}
+.section-card.completed .section-tag{background:rgba(90,122,92,.15);color:var(--sage2)}
+.section-chevron{color:var(--parchment);font-size:.8rem;transition:transform .3s;flex-shrink:0}
+.section-card.open .section-chevron{transform:rotate(180deg)}
+.section-body{display:none;border-top:1px solid rgba(212,196,168,.3)}
+.section-card.open .section-body{display:block}
+.pose-img{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
+.pose-img svg{width:80px;height:66px;display:block}
+.pose-label{font-size:.58rem;color:var(--muted);letter-spacing:.04em;text-align:center;font-style:italic;max-width:80px;line-height:1.3}
+.pose-pair{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px 8px;background:rgba(181,99,58,.04);border-radius:10px;margin:4px 14px 12px}
+.pose-pair-arrow{font-size:1.2rem;color:var(--parchment);flex-shrink:0}
+.pose-pair .pose-img svg{width:90px;height:75px}
+.pose-sequence{display:flex;overflow-x:auto;gap:0;padding:10px 14px 12px;margin:4px 14px 12px;background:rgba(181,99,58,.04);border-radius:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.pose-sequence::-webkit-scrollbar{display:none}
+.seq-pose-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;padding:0 8px;border-right:1px solid rgba(212,196,168,.3)}
+.seq-pose-item:last-child{border-right:none}
+.seq-pose-svg svg{width:68px;height:56px;display:block}
+.seq-pose-name{font-size:.55rem;color:var(--muted);text-align:center;font-style:italic;white-space:nowrap}
+.scroll-hint{font-size:.6rem;color:var(--parchment);text-align:center;margin:-4px 14px 8px;letter-spacing:.06em}
+.step-list{padding:10px 14px}
+.step{display:flex;gap:11px;padding:10px 8px;border-bottom:1px solid rgba(212,196,168,.18);cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:8px;transition:background .15s;margin:0 -8px}
+.step:last-child{border-bottom:none}
+.step:active{background:rgba(181,99,58,.05)}
+.step-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--parchment);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.34,1.56,.64,1);background:white}
+.step.done .step-check{background:var(--sage);border-color:var(--sage);transform:scale(1.1)}
+.step-check-inner{width:8px;height:8px;border-radius:50%;background:white;opacity:0;transition:opacity .2s}
+.step.done .step-check-inner{opacity:1}
+.step-main{flex:1;min-width:0}
+.step-top{display:flex;align-items:flex-start;gap:10px}
+.step-text{flex:1;min-width:0}
+.step-pose{font-family:var(--serif);font-size:.95rem;color:var(--deep);line-height:1.3;transition:color .2s}
+.step-pose em{font-size:.82rem;color:var(--muted)}
+.step.done .step-pose{color:var(--sage);text-decoration:line-through;text-decoration-color:rgba(90,122,92,.4)}
+.step-detail{font-size:.7rem;color:var(--muted);margin-top:3px;line-height:1.55;font-style:italic}
+.step-breath{display:inline-flex;align-items:center;gap:3px;font-size:.62rem;color:var(--terra);background:rgba(181,99,58,.1);border-radius:8px;padding:2px 7px;margin-top:4px;font-weight:600;letter-spacing:.04em}
+.step-optional{display:inline-flex;align-items:center;font-size:.62rem;color:var(--gold);background:rgba(196,153,58,.1);border-radius:8px;padding:2px 7px;margin-top:4px;margin-left:4px;font-weight:600}
+.step-pose-thumb{flex-shrink:0;margin-top:2px}
+.step-pose-thumb svg{width:58px;height:48px;display:block;opacity:.85;transition:opacity .2s}
+.step.done .step-pose-thumb svg{opacity:.35}
+/* ===== POSE FIGURE ANIMATIONS ===== */
+@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes breathe-body{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
+@keyframes neck-roll{0%{transform:rotate(0deg) translateX(0)}25%{transform:rotate(-12deg) translateX(-2px)}75%{transform:rotate(12deg) translateX(2px)}100%{transform:rotate(0deg) translateX(0)}}
+@keyframes stretch-arm{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) rotate(-3deg)}}
+@keyframes tabletop-breathe{0%,100%{transform:scaleY(1) translateY(0)}50%{transform:scaleY(0.97) translateY(1px)}}
+@keyframes cat-cow{0%,100%{d:path("M28 36 Q46 58 68 56 Q84 54 98 46")}50%{d:path("M28 44 Q46 28 68 30 Q84 32 98 40")}}
+@keyframes pedal-l{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes pedal-r{0%,100%{transform:translateY(-6px)}50%{transform:translateY(0)}}
+@keyframes lunge-arms{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes fold-sway{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}}
+@keyframes thread-breathe{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.02)}}
+
+.pose-sway{transform-origin:50% 90%;animation:sway 3s ease-in-out infinite}
+.pose-breathe{transform-origin:50% 50%;animation:breathe-body 4s ease-in-out infinite}
+.pose-neck{transform-origin:50% 30%;animation:neck-roll 3s ease-in-out infinite}
+.pose-stretch-arm{transform-origin:50% 40%;animation:stretch-arm 3s ease-in-out infinite}
+.pose-tabletop{transform-origin:50% 60%;animation:tabletop-breathe 4s ease-in-out infinite}
+.pose-thread{transform-origin:50% 60%;animation:thread-breathe 4s ease-in-out infinite}
+.pose-fold{transform-origin:50% 60%;animation:fold-sway 4s ease-in-out infinite}
+.leg-l-pedal{transform-origin:70px 22px;animation:pedal-l 1.4s ease-in-out infinite}
+.leg-r-pedal{transform-origin:70px 22px;animation:pedal-r 1.4s ease-in-out infinite}
+.lunge-arms-anim{animation:lunge-arms 2s ease-in-out infinite}
+
+.sequence-box{background:rgba(44,36,22,.04);border-radius:10px;padding:12px 14px;margin:4px 14px 12px}
+.sequence-title{font-size:.6rem;letter-spacing:.14em;color:var(--terra);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.seq-step{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid rgba(212,196,168,.22)}
+.seq-step:last-child{border-bottom:none}
+.seq-breath{font-size:.6rem;font-weight:700;color:var(--terra);min-width:44px;padding-top:2px;opacity:.85;letter-spacing:.03em}
+.seq-pose{font-family:var(--serif);font-size:.88rem;color:var(--deep);line-height:1.3}
+.seq-pose em{font-style:italic;color:var(--muted);font-size:.78rem}
+.info-box{background:rgba(181,99,58,.06);border-left:3px solid var(--terra);border-radius:0 8px 8px 0;padding:10px 14px;margin:4px 14px 12px;font-size:.72rem;color:var(--muted);line-height:1.65;font-style:italic}
+.info-box strong{color:var(--terra2);font-style:normal}
+.complete-btn{display:block;width:calc(100% - 28px);margin:4px 14px 14px;padding:11px;background:transparent;border:1.5px solid var(--parchment);border-radius:10px;font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.1em;color:var(--muted);cursor:pointer;text-transform:uppercase;transition:all .2s}
+.complete-btn:active{transform:scale(.98)}
+.section-card.completed .complete-btn{background:rgba(90,122,92,.1);border-color:var(--sage);color:var(--sage2)}
+.savasana-card{background:linear-gradient(135deg,rgba(90,122,92,.1),rgba(181,99,58,.06));border:1px solid rgba(90,122,92,.2);border-radius:12px;padding:22px 18px;text-align:center;margin:4px 14px 12px}
+.savasana-icon{font-size:2.2rem;margin-bottom:10px;animation:breathe 5s ease-in-out infinite}
+.savasana-title{font-family:var(--serif);font-size:1.4rem;color:var(--sage2);margin-bottom:5px}
+.savasana-duration{font-size:.62rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;font-weight:600}
+.savasana-pose-wrap{margin:0 auto 16px;display:flex;justify-content:center}
+.savasana-pose-wrap svg{width:200px;height:auto;opacity:.7}
+.savasana-text{font-size:.78rem;color:var(--muted);line-height:1.9;font-style:italic;margin-bottom:14px}
+.savasana-closing{font-family:var(--serif);font-size:1rem;color:var(--terra);font-style:italic}
+.completion-screen{display:none;position:fixed;inset:0;background:linear-gradient(135deg,#f7f0e6 0%,#ede3d3 100%);z-index:9000;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.completion-screen.show{display:flex}
+.completion-mandala{animation:spin-slow 20s linear infinite;margin-bottom:24px}
+@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.completion-title{font-family:var(--serif);font-size:2.1rem;color:var(--deep);margin-bottom:8px}
+.completion-sub{font-size:.78rem;color:var(--muted);line-height:1.8;max-width:280px;margin-bottom:28px;font-style:italic}
+.completion-adilla{font-family:var(--serif);font-size:1rem;color:var(--terra);font-style:italic;margin-bottom:28px}
+.completion-btn{padding:13px 32px;background:var(--terra);border:none;border-radius:28px;font-family:var(--sans);font-size:.72rem;letter-spacing:.14em;color:white;cursor:pointer;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.completion-choose-btn{padding:10px 24px;background:transparent;border:1.5px solid var(--parchment);border-radius:28px;font-family:var(--sans);font-size:.68rem;letter-spacing:.12em;color:var(--muted);cursor:pointer;text-transform:uppercase;font-weight:600}
+.breath-fab{position:fixed;bottom:calc(env(safe-area-inset-bottom,16px) + 20px);right:20px;z-index:500}
+.breath-btn{width:52px;height:52px;border-radius:50%;background:var(--terra);border:none;color:white;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 16px rgba(181,99,58,.35);display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.breath-btn:active{transform:scale(.9)}
+.breath-modal{position:fixed;inset:0;background:rgba(44,36,22,.55);z-index:8000;display:none;align-items:center;justify-content:center}
+.breath-modal.open{display:flex}
+.breath-sheet{background:var(--cream);border-radius:22px;padding:30px 24px;width:calc(100% - 48px);max-width:360px;text-align:center}
+.breath-modal-title{font-family:var(--serif);font-size:1.4rem;color:var(--deep);margin-bottom:4px}
+.breath-modal-sub{font-size:.68rem;color:var(--muted);letter-spacing:.06em;margin-bottom:24px}
+.breath-circle{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(181,99,58,.15),rgba(181,99,58,.04));border:2px solid rgba(181,99,58,.25);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:0 auto 20px;transition:transform .1s linear}
+.breath-phase{font-family:var(--serif);font-size:1rem;color:var(--terra);margin-bottom:4px}
+.breath-count{font-family:var(--serif);font-size:2rem;color:var(--deep)}
+.breath-controls{display:flex;gap:10px;justify-content:center}
+.breath-ctrl-btn{padding:9px 22px;border-radius:20px;border:1.5px solid var(--parchment);background:transparent;font-family:var(--sans);font-size:.68rem;font-weight:600;letter-spacing:.1em;color:var(--muted);cursor:pointer;text-transform:uppercase}
+.breath-ctrl-btn.primary{background:var(--terra);border-color:var(--terra);color:white}
+.adilla-footer{text-align:center;padding:20px 24px 30px;position:relative;z-index:1}
+.footer-name{font-family:var(--serif);font-size:.95rem;color:var(--terra);font-style:italic}
+.footer-tagline{font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-top:3px}
+.adilla-photo-wrap{display:flex;justify-content:center;margin-bottom:6px}.adilla-photo-circle{width:80px;height:80px;border-radius:50%;overflow:hidden;position:relative;box-shadow:0 4px 20px rgba(181,99,58,.25)}.adilla-photo-circle img{width:100%;height:100%;object-fit:cover;object-position:center top}.adilla-photo-ring{position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(181,99,58,.4);pointer-events:none}
+
+/* Easy program specific */
+.easy-intro-card{background:rgba(90,122,92,.06);border:1px solid rgba(90,122,92,.2);border-radius:14px;padding:16px 18px;margin:4px 14px 12px;text-align:center}
+.easy-intro-title{font-family:var(--serif);font-size:1.1rem;color:var(--sage2);margin-bottom:6px}
+.easy-intro-text{font-size:.72rem;color:var(--muted);line-height:1.7;font-style:italic}
+.rounds-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(90,122,92,.12);border-radius:20px;padding:4px 12px;font-size:.65rem;font-weight:700;color:var(--sage2);letter-spacing:.08em;margin-top:8px;text-transform:uppercase}
+
+/* Breath tags */
+.step-breath-timed{background:rgba(196,153,58,.12);color:var(--gold)}
+
+/* Round counter */
+.round-tracker{display:flex;gap:8px;justify-content:center;padding:10px 14px 14px}
+.round-dot{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--parchment);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;background:white}
+.round-dot.done{background:var(--sage);border-color:var(--sage);color:white}
+.round-label{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-align:center;margin-bottom:6px;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<!-- ===== PROGRAM SELECTION SCREEN ===== -->
+<div class="program-select-screen" id="programSelectScreen">
+  <div class="select-header">
+    <div class="adilla-photo-wrap" style="margin-bottom:6px"><div class="adilla-photo-circle"><img src="data:image/jpeg;base64,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" alt="Adilla"><div class="adilla-photo-ring"></div></div></div>
+    <div class="select-studio">Adilla Yoga · Lombok</div>
+    <h1 class="select-title">Choose Your Practice</h1>
+    <div class="select-sub">All programs designed for your whole body</div>
+    <div class="select-divider"></div>
+    <div class="select-label">Select a program to begin</div>
+  </div>
+
+  <div class="program-cards">
+    <div class="prog-card easy-a" onclick="selectProgram('easy-a')">
+      <div class="prog-card-top">
+        <div class="prog-icon">🌱</div>
+        <div class="prog-card-info">
+          <div class="prog-level">Easy A</div>
+          <div class="prog-name">Sun Salutation A</div>
+        </div>
+      </div>
+      <div class="prog-card-meta">
+        <span class="prog-pill">⏱ 30 min</span>
+        <span class="prog-pill">🌿 Beginner</span>
+        <span class="prog-pill">3–5 rounds</span>
+      </div>
+      <div class="prog-desc">Surya Namaskar A — the classic sequence. Mountain → Fold → Plank → Up Dog → Down Dog. Simple, grounding, and wonderful for the whole body.</div>
+      <div class="prog-arrow"><button class="prog-arrow-btn">Begin →</button></div>
+    </div>
+
+    <div class="prog-card easy-b" onclick="selectProgram('easy-b')">
+      <div class="prog-card-top">
+        <div class="prog-icon">🌻</div>
+        <div class="prog-card-info">
+          <div class="prog-level">Easy B</div>
+          <div class="prog-name">Sun Salutation B</div>
+        </div>
+      </div>
+      <div class="prog-card-meta">
+        <span class="prog-pill">⏱ 30 min</span>
+        <span class="prog-pill">🌿 Beginner+</span>
+        <span class="prog-pill">3–5 rounds</span>
+      </div>
+      <div class="prog-desc">Surya Namaskar B — adds Chair Pose and Warrior I. A little more fire than A, still easy to follow and excellent for the whole body.</div>
+      <div class="prog-arrow"><button class="prog-arrow-btn">Begin →</button></div>
+    </div>
+
+    <div class="prog-card advanced" onclick="selectProgram('advanced')">
+      <div class="prog-card-top">
+        <div class="prog-icon">🔥</div>
+        <div class="prog-card-info">
+          <div class="prog-level">Advanced</div>
+          <div class="prog-name">Vinyasa Flow</div>
+        </div>
+      </div>
+      <div class="prog-card-meta">
+        <span class="prog-pill">⏱ 60 min</span>
+        <span class="prog-pill">🔥 All levels</span>
+        <span class="prog-pill">Full practice</span>
+      </div>
+      <div class="prog-desc">Full Vinyasa Flow with warm-up, Sun Salutations, standing & balancing postures, peak pose, and Savasana. Breath awareness throughout.</div>
+      <div class="prog-arrow"><button class="prog-arrow-btn">Begin →</button></div>
+    </div>
+  </div>
+
+  <div class="select-footer" style="margin-top:28px">
+    <div class="select-footer-name">Adilla 😜</div>
+    <div class="select-footer-sub">Lombok · Vinyasa Flow</div>
+  </div>
+</div>
+
+<!-- ===== EASY A PROGRAM ===== -->
+<div class="program-view" id="view-easy-a">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      All Programs
+    </button>
+  </div>
+
+  <header class="app-header">
+    <div class="adilla-photo-wrap" style="margin-bottom:4px"><div class="adilla-photo-circle"><img src="data:image/jpeg;base64,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" alt="Adilla"><div class="adilla-photo-ring"></div></div></div>
+    <div class="studio-name">Adilla Yoga · Easy A</div>
+    <h1 class="class-title">Sun Salutation A</h1>
+    <div class="class-theme" style="color:var(--sage)">Surya Namaskar A &nbsp;·&nbsp; Beginner Friendly</div>
+    <div class="header-divider"></div>
+  </header>
+
+  <div class="meta-row">
+    <div class="meta-pill">⏱ <b>30 min</b></div>
+    <div class="meta-pill">🌿 <b>Beginner</b></div>
+    <div class="meta-pill">🔄 <b>3–5 rounds</b></div>
+    <div class="meta-pill">✓ <b id="ea-completedCount">0 / 3</b></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span class="progress-text">Session Progress</span>
+      <span class="progress-pct" id="ea-progressPct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="ea-progressFill" style="background:linear-gradient(90deg,var(--sage),#8ab88c)"></div></div>
+  </div>
+
+  <main class="content">
+
+    <div class="section-card" id="ea-sec-1">
+      <div class="section-header" onclick="toggleSec('ea',1)">
+        <div class="section-num">1</div>
+        <div class="section-info">
+          <div class="section-name">Arrive &amp; Centre</div>
+          <div class="section-meta"><span class="section-tag">3 min</span><span class="section-tag">Grounding</span></div>
+        </div>
+        <div class="section-chevron">&#9662;</div>
+      </div>
+      <div class="section-body">
+        <div class="easy-intro-card">
+          <div class="easy-intro-title">Sun Salutation A</div>
+          <div class="easy-intro-text">A timeless sequence. Each round takes about 3–4 minutes. Move with your breath — inhale to rise, exhale to fold. The sequence is simple enough that your mind can rest and follow the breath.</div>
+          <div class="rounds-badge">🌿 Recommended: 3–5 rounds</div>
+        </div>
+        <div class="step-list">
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Find your mat</div>
+              <div class="step-detail">Stand at the top. Feet hip-width apart. Hands by your sides. Close your eyes for a moment.</div>
+              <div class="step-breath">🌬 3 deep breaths</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Set your intention</div>
+              <div class="step-detail">Why are you here today? Let that be your anchor. You don't need to be anywhere else.</div>
+            </div></div></div>
+          </div>
+        </div>
+        <button class="complete-btn" style="border-color:var(--sage);color:var(--sage2)" onclick="completeSec('ea',1,3)">Ready — Let's Flow ✓</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="ea-sec-2">
+      <div class="section-header" onclick="toggleSec('ea',2)">
+        <div class="section-num">2</div>
+        <div class="section-info">
+          <div class="section-name">The Full Sequence</div>
+          <div class="section-meta"><span class="section-tag">20 min</span><span class="section-tag">3–5 rounds</span></div>
+        </div>
+        <div class="section-chevron">&#9662;</div>
+      </div>
+      <div class="section-body">
+        <div class="info-box"><strong>Breath is the guide.</strong> Every movement follows the breath. Lose the breath — pause. Slow everything down until you find it again.</div>
+
+        <div class="sequence-box">
+          <div class="sequence-title">Sun Salutation A — Step by Step</div>
+          <div class="seq-step"><div class="seq-breath">①</div><div class="seq-pose">Mountain Pose <em>(Tadasana)</em> — stand tall, feet hip-width, arms by sides. Take 1 full breath.</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Upward Salute <em>(Urdhva Hastasana)</em> — raise arms overhead, lengthen spine, gaze softly up.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Forward Fold <em>(Uttanasana)</em> — fold from hips, knees soft. Relax neck and shoulders.</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Half Lift <em>(Ardha Uttanasana)</em> — hands to shins or floor. Lengthen spine, chest forward.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Step or jump back to Plank Pose — body in one straight line.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Chaturanga Dandasana — lower slowly, elbows in. <em>Mod: knees down.</em></div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Upward Dog or Cobra — open chest, shoulders back, top of feet press down.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Downward Facing Dog <em>(Adho Mukha Svanasana)</em> — hips high. <span style="color:var(--terra);font-weight:700">Hold 5 breaths.</span></div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Step or jump forward — come back to Half Lift.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Forward Fold — surrender.</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Rise to standing — sweep arms overhead.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Return to Mountain Pose — hands to heart. Rest here before the next round.</div></div>
+        </div>
+        <div class="info-box"><strong>Adilla says:</strong> If Chaturanga is too much, just lower knees and rest in Child's Pose. The breath matters more than the shape.</div>
+        <div class="round-label">Log each round</div>
+        <div class="round-tracker">
+          <div class="round-dot" onclick="toggleRound(this)">1</div>
+          <div class="round-dot" onclick="toggleRound(this)">2</div>
+          <div class="round-dot" onclick="toggleRound(this)">3</div>
+          <div class="round-dot" onclick="toggleRound(this)">4</div>
+          <div class="round-dot" onclick="toggleRound(this)">5</div>
+        </div>
+        <button class="complete-btn" style="border-color:var(--sage);color:var(--sage2)" onclick="completeSec('ea',2,3)">Rounds Complete ✓</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="ea-sec-3">
+      <div class="section-header" onclick="toggleSec('ea',3)">
+        <div class="section-num">3</div>
+        <div class="section-info">
+          <div class="section-name">Cool Down &amp; Rest</div>
+          <div class="section-meta"><span class="section-tag">7 min</span><span class="section-tag">Savasana</span></div>
+        </div>
+        <div class="section-chevron">&#9662;</div>
+      </div>
+      <div class="section-body">
+        <div class="step-list">
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Child's Pose <em>(Balasana)</em></div>
+              <div class="step-detail">Kneel, big toes together, sit back on heels. Stretch arms forward or rest them by your sides. Let the forehead meet the mat.</div>
+              <div class="step-breath">🌬 8 deep breaths</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Seated Forward Fold <em>(Paschimottanasana)</em></div>
+              <div class="step-detail">Extend legs long. Inhale lengthen spine, exhale fold forward. Hands to feet or shins. No forcing.</div>
+              <div class="step-breath">🌬 8 breaths</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Supine Twist</div>
+              <div class="step-detail">Lie on back. Draw one knee to chest, guide it across the body. Arms wide. Gaze away from knees.</div>
+              <div class="step-breath">🌬 6 breaths each side</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Savasana — Corpse Pose</div>
+              <div class="step-detail">Lie flat. Arms slightly away from body, palms up. Feet fall open. Close the eyes. Let everything go.</div>
+              <div class="step-breath step-breath-timed">⏱ 3–5 minutes — do not skip this</div>
+            </div></div></div>
+          </div>
+        </div>
+        <div class="info-box"><strong>Adilla says:</strong> Go home and be happy 😜 Your body absorbed 30 minutes of conscious movement. That is enough.</div>
+        <button class="complete-btn" style="border-color:var(--sage);color:var(--sage2)" onclick="completeSec('ea',3,3)">Complete Session ✓</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="adilla-footer">
+    <div class="footer-name">Adilla · Yoga Teacher</div>
+    <div class="footer-tagline">Lombok · Sun Salutation A</div>
+  </footer>
+</div>
+
+<!-- ===== EASY B PROGRAM ===== -->
+<div class="program-view" id="view-easy-b">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      All Programs
+    </button>
+  </div>
+
+  <header class="app-header">
+    <div class="adilla-photo-wrap" style="margin-bottom:4px"><div class="adilla-photo-circle"><img src="data:image/jpeg;base64,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" alt="Adilla"><div class="adilla-photo-ring"></div></div></div>
+    <div class="studio-name" style="color:var(--gold)">Adilla Yoga · Easy B</div>
+    <h1 class="class-title">Sun Salutation B</h1>
+    <div class="class-theme" style="color:var(--gold)">Surya Namaskar B &nbsp;·&nbsp; A Little More Fire</div>
+    <div class="header-divider"></div>
+  </header>
+
+  <div class="meta-row">
+    <div class="meta-pill">⏱ <b>30 min</b></div>
+    <div class="meta-pill">🌻 <b>Beginner+</b></div>
+    <div class="meta-pill">🔄 <b>3–5 rounds</b></div>
+    <div class="meta-pill">✓ <b id="eb-completedCount">0 / 3</b></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span class="progress-text">Session Progress</span>
+      <span class="progress-pct" id="eb-progressPct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="eb-progressFill" style="background:linear-gradient(90deg,var(--gold),#e5b84a)"></div></div>
+  </div>
+
+  <main class="content">
+
+    <div class="section-card" id="eb-sec-1">
+      <div class="section-header" onclick="toggleSec('eb',1)">
+        <div class="section-num">1</div>
+        <div class="section-info">
+          <div class="section-name">Arrive &amp; Centre</div>
+          <div class="section-meta"><span class="section-tag">3 min</span><span class="section-tag">Grounding</span></div>
+        </div>
+        <div class="section-chevron">&#9662;</div>
+      </div>
+      <div class="section-body">
+        <div class="easy-intro-card" style="background:rgba(196,153,58,.06);border-color:rgba(196,153,58,.2)">
+          <div class="easy-intro-title" style="color:var(--gold)">Sun Salutation B</div>
+          <div class="easy-intro-text">Surya Namaskar B adds Chair Pose and Warrior I to the classic A sequence. A little more heat — still very accessible. Your legs and hips will thank you.</div>
+          <div class="rounds-badge" style="background:rgba(196,153,58,.12);color:#8a6a20">🌻 Recommended: 3–5 rounds</div>
+        </div>
+        <div class="step-list">
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Mountain Pose — Stand tall</div>
+              <div class="step-detail">At the top of the mat. Feet hip-width. Eyes soft. Take 3 slow breaths to arrive fully.</div>
+              <div class="step-breath">🌬 3 breaths</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Notice the difference from A</div>
+              <div class="step-detail">In B, you start with Chair Pose instead of Upward Salute. And you visit Warrior I twice — once per side — inside each round. That's it.</div>
+            </div></div></div>
+          </div>
+        </div>
+        <button class="complete-btn" style="border-color:var(--gold);color:#8a6a20" onclick="completeSec('eb',1,3)">Ready — Let's Flow ✓</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="eb-sec-2">
+      <div class="section-header" onclick="toggleSec('eb',2)">
+        <div class="section-num">2</div>
+        <div class="section-info">
+          <div class="section-name">The Full Sequence</div>
+          <div class="section-meta"><span class="section-tag">20 min</span><span class="section-tag">3–5 rounds</span></div>
+        </div>
+        <div class="section-chevron">&#9662;</div>
+      </div>
+      <div class="section-body">
+        <div class="info-box"><strong>One round = all 22 steps.</strong> Warrior I visits both sides in each round. Take your time — especially in Down Dog and Warrior I.</div>
+
+        <div class="sequence-box">
+          <div class="sequence-title">Sun Salutation B — Step by Step</div>
+          <div class="seq-step"><div class="seq-breath">①</div><div class="seq-pose">Mountain Pose <em>(Tadasana)</em></div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Chair Pose <em>(Utkatasana)</em> — bend knees, hips back, arms reach overhead.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Forward Fold <em>(Uttanasana)</em></div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Half Lift <em>(Ardha Uttanasana)</em></div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Step or jump back to Plank Pose</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Chaturanga Dandasana — <em>Mod: knees down</em></div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Upward Facing Dog or Cobra</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Downward Facing Dog</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Step <strong>right foot</strong> forward → Warrior I <em>(Virabhadrasana I)</em> — back heel grounded, arms reach up. Hold 1 breath.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Hands down, step back to Plank</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Chaturanga</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Upward Facing Dog</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Downward Facing Dog</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Step <strong>left foot</strong> forward → Warrior I — hold 1 breath.</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Hands down, step back to Plank</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Chaturanga</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Upward Facing Dog</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Downward Facing Dog — <strong>stay 5 breaths</strong></div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Step or jump forward</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Forward Fold</div></div>
+          <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Chair Pose — arms up, sink the hips</div></div>
+          <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Mountain Pose — return, hands to heart. Rest before the next round.</div></div>
+        </div>
+        <div class="info-box"><strong>Adilla says:</strong> Warrior I is a power pose. Ground the back heel fully, square the hips as best you can, and breathe into the chest as you reach up.</div>
+        <div class="round-label">Log each round</div>
+        <div class="round-tracker">
+          <div class="round-dot" onclick="toggleRound(this)">1</div>
+          <div class="round-dot" onclick="toggleRound(this)">2</div>
+          <div class="round-dot" onclick="toggleRound(this)">3</div>
+          <div class="round-dot" onclick="toggleRound(this)">4</div>
+          <div class="round-dot" onclick="toggleRound(this)">5</div>
+        </div>
+        <button class="complete-btn" style="border-color:var(--gold);color:#8a6a20" onclick="completeSec('eb',2,3)">Rounds Complete ✓</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="eb-sec-3">
+      <div class="section-header" onclick="toggleSec('eb',3)">
+        <div class="section-num">3</div>
+        <div class="section-info">
+          <div class="section-name">Cool Down &amp; Rest</div>
+          <div class="section-meta"><span class="section-tag">7 min</span><span class="section-tag">Savasana</span></div>
+        </div>
+        <div class="section-chevron">&#9662;</div>
+      </div>
+      <div class="section-body">
+        <div class="step-list">
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Low Lunge <em>(Anjaneyasana)</em></div>
+              <div class="step-detail">Step one foot forward between hands. Back knee down. Sink hips forward and down. Option: arms up.</div>
+              <div class="step-breath">🌬 6 breaths each side</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Pigeon Pose or Figure Four</div>
+              <div class="step-detail">From Down Dog, bring one knee forward behind wrist. Flex foot. Fold over the shin. Deep hip opener after all those Warriors.</div>
+              <div class="step-breath">🌬 8 breaths each side</div>
+              <div class="step-optional">✦ Optional</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Supine Twist</div>
+              <div class="step-detail">On your back. Draw one knee to chest, cross it over. Arms wide. Switch sides.</div>
+              <div class="step-breath">🌬 6 breaths each side</div>
+            </div></div></div>
+          </div>
+          <div class="step" onclick="toggleStep(this)">
+            <div class="step-check"><div class="step-check-inner"></div></div>
+            <div class="step-main"><div class="step-top"><div class="step-text">
+              <div class="step-pose">Savasana — Corpse Pose</div>
+              <div class="step-detail">Flat on your back. Arms open, palms up. Let feet fall apart. Close eyes. No agenda. Just receive.</div>
+              <div class="step-breath step-breath-timed">⏱ 3–5 minutes</div>
+            </div></div></div>
+          </div>
+        </div>
+        <div class="info-box"><strong>Adilla says:</strong> Go home and be happy 😜 B has more fire than A. You earned this rest.</div>
+        <button class="complete-btn" style="border-color:var(--gold);color:#8a6a20" onclick="completeSec('eb',3,3)">Complete Session ✓</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="adilla-footer">
+    <div class="footer-name">Adilla · Yoga Teacher</div>
+    <div class="footer-tagline">Lombok · Sun Salutation B</div>
+  </footer>
+</div>
+
+<!-- ===== ADVANCED PROGRAM (original) ===== -->
+<div class="program-view" id="view-advanced">
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      All Programs
+    </button>
+  </div>
+
+  <header class="app-header">
+  <div class="adilla-photo-wrap"><div class="adilla-photo-circle"><img src="data:image/jpeg;base64,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" alt="Adilla"><div class="adilla-photo-ring"></div></div></div>
+  <div class="studio-name">Adilla Yoga · Lombok</div>
+  <h1 class="class-title">Vinyasa Flow</h1>
+  <div class="class-theme">Breath Awareness &amp; Steady Flow &nbsp;·&nbsp; All Levels</div>
+  <div class="header-divider"></div>
+</header>
+
+<div class="meta-row">
+  <div class="meta-pill">&#9201; <b>60 min</b></div>
+  <div class="meta-pill">&#129504; <b>All levels</b></div>
+  <div class="meta-pill">&#127807; <b>Vinyasa</b></div>
+  <div class="meta-pill">&#10003; <b id="completedCount">0 / 7</b></div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span class="progress-text">Session Progress</span>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<main class="content">
+
+<!-- All 7 original sections preserved exactly below -->
+<div class="section-card" id="sec-1">
+  <div class="section-header" onclick="toggleSection(1)">
+    <div class="section-num">1</div>
+    <div class="section-info">
+      <div class="section-name">Arrival &amp; Centering</div>
+      <div class="section-meta"><span class="section-tag">5 min</span><span class="section-tag">Grounding</span></div>
+    </div>
+    <div class="section-chevron">&#9662;</div>
+  </div>
+  <div class="section-body">
+    <div class="step-list">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Easy Seated Pose <em>(Sukhasana)</em></div>
+            <div class="step-detail">Close eyes. Hands on knees. Let sit bones root into the earth.</div>
+            <div class="step-breath">🌬 5 slow deep breaths</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" class="pose-sway" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="14" r="7" fill="#b5633a" stroke="none"/><path d="M60 21 Q60 33 60 46" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M60 30 Q48 38 36 44" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="34" cy="45" r="4" fill="#b5633a"/><path d="M60 30 Q72 38 84 44" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="86" cy="45" r="4" fill="#b5633a"/><path d="M60 46 Q44 55 30 62 Q44 65 60 64 Q76 65 90 62 Q76 55 60 46" stroke="#b5633a" stroke-width="3" fill="rgba(181,99,58,0.1)"/><path d="M34 62 Q28 72 30 80" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M88 62 Q92 72 90 80" stroke="#b5633a" stroke-width="3" fill="none"/><line x1="14" y1="94" x2="106" y2="94" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Gentle Neck Rolls</div>
+            <div class="step-detail">Slow full circles. Let the weight of the head lead. Release neck and jaw.</div>
+            <div class="step-breath">&#8635; 3 rounds each side</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" class="pose-neck" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="14" r="7" fill="#b5633a" stroke="none"/><path d="M60 21 Q60 36 60 54" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M60 36 Q46 44 36 50" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="34" cy="52" r="4" fill="#b5633a"/><path d="M60 36 Q74 44 84 50" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="86" cy="52" r="4" fill="#b5633a"/><path d="M60 54 Q46 62 36 72" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M60 54 Q74 62 84 72" stroke="#b5633a" stroke-width="3.5" fill="none"/><line x1="14" y1="88" x2="106" y2="88" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Seated Side Stretch</div>
+            <div class="step-detail">Arm overhead, lean opposite side. Breathe into the ribs.</div>
+            <div class="step-breath">🌬 2 breaths each side</div>
+            <div class="step-optional">&#10022; Optional</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" class="pose-stretch-arm" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="14" r="7" fill="#b5633a" stroke="none"/><path d="M60 21 Q60 36 60 54" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M60 36 Q78 28 90 18" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="92" cy="17" r="4" fill="#b5633a"/><path d="M60 36 Q46 44 36 52" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="34" cy="54" r="4" fill="#b5633a"/><path d="M60 54 Q48 64 40 76" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M60 54 Q72 64 80 76" stroke="#b5633a" stroke-width="3.5" fill="none"/><line x1="14" y1="88" x2="106" y2="88" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+    </div>
+    <button class="complete-btn" onclick="completeSection(1)">Mark Complete &#10003;</button>
+  </div>
+</div>
+
+<div class="section-card" id="sec-2">
+  <div class="section-header" onclick="toggleSection(2)">
+    <div class="section-num">2</div>
+    <div class="section-info">
+      <div class="section-name">Gentle Warm-Up</div>
+      <div class="section-meta"><span class="section-tag">10 min</span><span class="section-tag">Foundation</span></div>
+    </div>
+    <div class="section-chevron">&#9662;</div>
+  </div>
+  <div class="section-body">
+    <div class="step-list">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Tabletop Position</div>
+            <div class="step-detail">Wrists under shoulders, knees under hips. Neutral spine. Ground all four points.</div>
+            <div class="step-breath step-breath-timed">&#9201; 1 minute — settle in</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" class="pose-tabletop" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="38" r="7" fill="#b5633a" stroke="none"/><path d="M28 40 Q62 38 96 38" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M36 38 Q34 54 32 70" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M56 38 Q54 54 52 70" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M78 38 Q78 54 78 70" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M96 38 Q96 54 96 70" stroke="#b5633a" stroke-width="3" fill="none"/><ellipse cx="32" cy="72" rx="6" ry="3.5" fill="#b5633a"/><ellipse cx="52" cy="72" rx="6" ry="3.5" fill="#b5633a"/><ellipse cx="78" cy="72" rx="5" ry="3" fill="#b5633a"/><ellipse cx="96" cy="72" rx="5" ry="3" fill="#b5633a"/><line x1="10" y1="76" x2="110" y2="76" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Cat / Cow</div>
+            <div class="step-detail">Inhale arch back — Cow. Exhale round spine — Cat. Let breath drive the movement, not the other way.</div>
+            <div class="step-breath">&#8635; 8 slow rounds</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" class="pose-sway" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="32" r="7" fill="#b5633a" stroke="none"/><path d="M28 36 Q46 58 68 56 Q84 54 98 46" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M40 54 Q38 64 36 72" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M58 56 Q56 64 54 72" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M82 54 Q80 64 80 72" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M98 46 Q98 58 98 70" stroke="#b5633a" stroke-width="3" fill="none"/><ellipse cx="36" cy="74" rx="6" ry="3" fill="#b5633a"/><ellipse cx="54" cy="74" rx="6" ry="3" fill="#b5633a"/><ellipse cx="80" cy="74" rx="5" ry="3" fill="#b5633a"/><ellipse cx="98" cy="74" rx="5" ry="3" fill="#b5633a"/><line x1="10" y1="80" x2="110" y2="80" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Thread the Needle</div>
+            <div class="step-detail">Slide one arm under body from tabletop. Rest shoulder and ear on mat.</div>
+            <div class="step-breath step-breath-timed">&#9201; 1 minute each side</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" class="pose-thread" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="60" r="7" fill="#b5633a" stroke="none"/><path d="M22 60 Q52 50 72 46" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M44 54 Q60 38 74 28" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="76" cy="26" r="4" fill="#b5633a"/><path d="M72 46 Q72 60 72 74" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M72 46 Q84 46 96 46" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M96 46 Q96 60 96 74" stroke="#b5633a" stroke-width="3" fill="none"/><ellipse cx="72" cy="76" rx="5" ry="3" fill="#b5633a"/><ellipse cx="96" cy="76" rx="5" ry="3" fill="#b5633a"/><line x1="8" y1="80" x2="112" y2="80" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Downward Facing Dog <em>(Adho Mukha Svanasana)</em></div>
+            <div class="step-detail">Hips high, press into hands. Pedal feet alternately. Head hangs naturally.</div>
+            <div class="step-breath step-breath-timed">&#9201; 1 minute · pedal feet</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="44" r="7" fill="#b5633a" stroke="none"/><path d="M24 52 Q18 64 16 74" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M24 52 Q34 64 36 74" stroke="#b5633a" stroke-width="3" fill="none"/><ellipse cx="16" cy="76" rx="6" ry="3" fill="#b5633a"/><ellipse cx="36" cy="76" rx="6" ry="3" fill="#b5633a"/><path d="M24 52 Q46 32 70 22" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M70 22 Q80 40 84 60" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M84 60 Q82 72 80 80" stroke="#b5633a" stroke-width="3" fill="none"/><ellipse cx="80" cy="82" rx="6" ry="3" fill="#b5633a"/><path d="M70 22 Q92 40 98 58" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M98 58 Q100 70 100 80" stroke="#b5633a" stroke-width="3" fill="none"/><ellipse cx="100" cy="82" rx="6" ry="3" fill="#b5633a"/><line x1="10" y1="88" x2="112" y2="88" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Low Lunge Flow</div>
+            <div class="step-detail">Step right foot forward. Inhale arms up. Exhale hands down. Move fluidly.</div>
+            <div class="step-breath">&#8635; 2 rounds each side</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="58" cy="10" r="7" fill="#b5633a" stroke="none"/><path d="M58 17 Q58 30 58 50" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M58 28 Q46 18 36 10" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="35" cy="9" r="4" fill="#b5633a"/><path d="M58 28 Q70 18 80 10" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="81" cy="9" r="4" fill="#b5633a"/><path d="M58 50 Q66 62 72 74" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M72 74 Q72 80 72 88" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M58 50 Q42 58 30 62" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M30 62 Q22 74 18 84" stroke="#b5633a" stroke-width="3" fill="none"/><ellipse cx="72" cy="90" rx="7" ry="3" fill="#b5633a"/><line x1="10" y1="88" x2="112" y2="88" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top">
+          <div class="step-text">
+            <div class="step-pose">Half Split <em>(Ardha Hanumanasana)</em></div>
+            <div class="step-detail">Shift hips back, straighten front leg. Flex foot. Fold forward lengthening hamstring.</div>
+            <div class="step-breath">🌬 5 breaths each side</div>
+          </div>
+          <div class="step-pose-thumb"><svg viewBox="0 0 120 100" class="pose-fold" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="74" cy="30" r="7" fill="#b5633a" stroke="none"/><path d="M68 36 Q58 48 48 62" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M62 40 Q78 50 90 56" stroke="#b5633a" stroke-width="3" fill="none"/><circle cx="92" cy="57" r="4" fill="#b5633a"/><path d="M62 40 Q50 52 42 62" stroke="#b5633a" stroke-width="3" fill="none"/><path d="M48 62 Q78 68 108 66" stroke="#b5633a" stroke-width="4" fill="none"/><path d="M48 62 Q36 60 20 56" stroke="#b5633a" stroke-width="3.5" fill="none"/><path d="M20 56 Q18 70 16 82" stroke="#b5633a" stroke-width="3" fill="none"/><line x1="10" y1="88" x2="112" y2="88" stroke="#d4c4a8" stroke-width="1.5"/></svg></div>
+        </div></div>
+      </div>
+    </div>
+    <button class="complete-btn" onclick="completeSection(2)">Mark Complete &#10003;</button>
+  </div>
+</div>
+
+<div class="section-card" id="sec-3">
+  <div class="section-header" onclick="toggleSection(3)">
+    <div class="section-num">3</div>
+    <div class="section-info">
+      <div class="section-name">Sun Salutation A</div>
+      <div class="section-meta"><span class="section-tag">8 min</span><span class="section-tag">3 rounds</span></div>
+    </div>
+    <div class="section-chevron">&#9662;</div>
+  </div>
+  <div class="section-body">
+    <div class="info-box"><strong>Breath is the teacher.</strong> Move on each breath transition. Lose the breath — slow down.</div>
+    <div class="sequence-box">
+      <div class="sequence-title">Surya Namaskar A — 3 Rounds</div>
+      <div class="seq-step"><div class="seq-breath">① Stand</div><div class="seq-pose">Mountain Pose — feet hip-width, arms by sides, one full breath</div></div>
+      <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Upward Salute — arms overhead, lengthen spine</div></div>
+      <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Forward Fold — fold from hips, relax neck</div></div>
+      <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Half Lift — chest forward, spine long</div></div>
+      <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Plank → Chaturanga — elbows close, <em>mod: knees down</em></div></div>
+      <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Up Dog or Cobra — open chest</div></div>
+      <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Down Dog — hold <strong>5 breaths</strong></div></div>
+      <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Step or jump forward → Half Lift</div></div>
+      <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Forward Fold</div></div>
+      <div class="seq-step"><div class="seq-breath">Inhale</div><div class="seq-pose">Rise to standing, arms overhead</div></div>
+      <div class="seq-step"><div class="seq-breath">Exhale</div><div class="seq-pose">Mountain Pose — hands to heart ✦ repeat</div></div>
+    </div>
+    <div class="round-label">Log each round</div>
+    <div class="round-tracker">
+      <div class="round-dot" onclick="toggleRound(this)">1</div>
+      <div class="round-dot" onclick="toggleRound(this)">2</div>
+      <div class="round-dot" onclick="toggleRound(this)">3</div>
+      <div class="round-dot" onclick="toggleRound(this)">4</div>
+      <div class="round-dot" onclick="toggleRound(this)">5</div>
+    </div>
+    <button class="complete-btn" onclick="completeSection(3)">Mark Complete &#10003;</button>
+  </div>
+</div>
+
+<div class="section-card" id="sec-4">
+  <div class="section-header" onclick="toggleSection(4)">
+    <div class="section-num">4</div>
+    <div class="section-info">
+      <div class="section-name">Standing Postures</div>
+      <div class="section-meta"><span class="section-tag">12 min</span><span class="section-tag">Strength</span></div>
+    </div>
+    <div class="section-chevron">&#9662;</div>
+  </div>
+  <div class="section-body">
+    <div class="step-list">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Warrior I <em>(Virabhadrasana I)</em></div>
+          <div class="step-detail">Front knee over ankle. Back heel grounded. Hips square forward. Arms strong overhead.</div>
+          <div class="step-breath">🌬 5 breaths each side</div>
+        </div></div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Warrior II <em>(Virabhadrasana II)</em></div>
+          <div class="step-detail">Open hips to the side. Front knee tracks over toes. Gaze over front fingers. Arms parallel to floor.</div>
+          <div class="step-breath">🌬 5 breaths each side</div>
+        </div></div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Extended Side Angle <em>(Utthita Parsvakonasana)</em></div>
+          <div class="step-detail">From Warrior II. Forearm to thigh or hand to block/floor. Top arm extends overhead. Long line from back foot to fingertips.</div>
+          <div class="step-breath">🌬 5 breaths each side</div>
+        </div></div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Triangle <em>(Trikonasana)</em></div>
+          <div class="step-detail">Straight front leg. Reach forward then hinge. Hand to shin, block, or floor. Top arm reaches for the sky.</div>
+          <div class="step-breath">🌬 5 breaths each side</div>
+        </div></div></div>
+      </div>
+    </div>
+    <button class="complete-btn" onclick="completeSection(4)">Mark Complete &#10003;</button>
+  </div>
+</div>
+
+<div class="section-card" id="sec-5">
+  <div class="section-header" onclick="toggleSection(5)">
+    <div class="section-num">5</div>
+    <div class="section-info">
+      <div class="section-name">Balancing &amp; Peak</div>
+      <div class="section-meta"><span class="section-tag">10 min</span><span class="section-tag">Focus</span></div>
+    </div>
+    <div class="section-chevron">&#9662;</div>
+  </div>
+  <div class="section-body">
+    <div class="info-box"><strong>Drishti — fixed gaze point.</strong> Pick one spot. Balancing postures are a moving meditation. Falls are part of the practice.</div>
+    <div class="step-list">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Tree Pose <em>(Vrksasana)</em></div>
+          <div class="step-detail">Root one foot. Place the other at calf or inner thigh — not the knee. Hands to heart or overhead.</div>
+          <div class="step-breath">🌬 8 breaths each side</div>
+        </div></div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Warrior III <em>(Virabhadrasana III)</em></div>
+          <div class="step-detail">From standing, hinge forward, one leg lifts behind. Body makes a T-shape. Arms forward or by sides.</div>
+          <div class="step-breath">🌬 5 breaths each side</div>
+        </div></div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Peak Pose — Your choice</div>
+          <div class="step-detail">Choose what your body needs today: Dancer's Pose, Half Moon, Side Plank, or simply hold Warrior III longer.</div>
+          <div class="step-breath">🌬 5 breaths each side</div>
+          <div class="step-optional">✦ Choose your peak</div>
+        </div></div></div>
+      </div>
+    </div>
+    <button class="complete-btn" onclick="completeSection(5)">Mark Complete &#10003;</button>
+  </div>
+</div>
+
+<div class="section-card" id="sec-6">
+  <div class="section-header" onclick="toggleSection(6)">
+    <div class="section-num">6</div>
+    <div class="section-info">
+      <div class="section-name">Floor &amp; Closing</div>
+      <div class="section-meta"><span class="section-tag">10 min</span><span class="section-tag">Release</span></div>
+    </div>
+    <div class="section-chevron">&#9662;</div>
+  </div>
+  <div class="section-body">
+    <div class="step-list">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Seated Forward Fold <em>(Paschimottanasana)</em></div>
+          <div class="step-detail">Legs long. Inhale lengthen, exhale fold. Hands wherever they land. Surrender the back of the body.</div>
+          <div class="step-breath">🌬 10 breaths</div>
+        </div></div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Supine Twist <em>(Supta Matsyendrasana)</em></div>
+          <div class="step-detail">Lie on back. One knee drawn across body. Arms wide. Let gravity do the work. Switch sides.</div>
+          <div class="step-breath">🌬 8 breaths each side</div>
+        </div></div></div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-check"><div class="step-check-inner"></div></div>
+        <div class="step-main"><div class="step-top"><div class="step-text">
+          <div class="step-pose">Happy Baby <em>(Ananda Balasana)</em></div>
+          <div class="step-detail">Grab outer feet or ankles. Knees wide to armpits. Gently rock side to side.</div>
+          <div class="step-breath">🌬 8 breaths</div>
+          <div class="step-optional">✦ Optional</div>
+        </div></div></div>
+      </div>
+    </div>
+    <button class="complete-btn" onclick="completeSection(6)">Mark Complete &#10003;</button>
+  </div>
+</div>
+
+<div class="section-card" id="sec-7">
+  <div class="section-header" onclick="toggleSection(7)">
+    <div class="section-num">7</div>
+    <div class="section-info">
+      <div class="section-name">Savasana</div>
+      <div class="section-meta"><span class="section-tag">5 min</span><span class="section-tag">Integration</span></div>
+    </div>
+    <div class="section-chevron">&#9662;</div>
+  </div>
+  <div class="section-body">
+    <div class="savasana-card">
+      <div class="savasana-icon">🌙</div>
+      <div class="savasana-title">Savasana</div>
+      <div class="savasana-duration">5 minutes · do not skip</div>
+      <div class="savasana-text">
+        Lie flat on your back.<br>
+        Feet fall open naturally. Arms slightly away from the body, palms face up.<br><br>
+        Close the eyes. Breathe naturally.<br><br>
+        Allow the body to completely receive the practice.<br>
+        There is nothing to do. Only this moment.
+      </div>
+      <div class="savasana-closing">End with a gentle seated closing.</div>
+    </div>
+    <div class="info-box"><strong>Adilla says:</strong> Go home and be happy &#128537; Appreciate your efforts, yogis. The mat will be here when you return.</div>
+    <button class="complete-btn" onclick="completeSection(7)">Complete Session &#10003;</button>
+  </div>
+</div>
+
+</main>
+
+<footer class="adilla-footer">
+  <div class="footer-name">Adilla · Yoga Teacher</div>
+  <div class="footer-tagline">Lombok · Vinyasa Flow</div>
+</footer>
+
+</div><!-- /view-advanced -->
+
+<!-- Breath FAB (shared) -->
+<div class="breath-fab">
+  <button class="breath-btn" onclick="openBreath()" title="Breath Guide">🌬</button>
+</div>
+
+<div class="breath-modal" id="breathModal" onclick="if(event.target===this)closeBreath()">
+  <div class="breath-sheet">
+    <div class="breath-modal-title">Breath Guide</div>
+    <div class="breath-modal-sub">4 · 4 · 4 equal breath pattern</div>
+    <div class="breath-circle" id="breathCircle">
+      <div class="breath-phase" id="breathPhase">Ready</div>
+      <div class="breath-count" id="breathCount">4</div>
+    </div>
+    <div class="breath-controls">
+      <button class="breath-ctrl-btn" onclick="closeBreath()">Close</button>
+      <button class="breath-ctrl-btn primary" id="breathPlayBtn" onclick="toggleBreath()">Start</button>
+    </div>
+  </div>
+</div>
+
+<!-- Completion screens -->
+<div class="completion-screen" id="completionScreenEasyA">
+  <svg class="completion-mandala" width="88" height="88" viewBox="0 0 88 88">
+    <circle cx="44" cy="44" r="40" fill="none" stroke="#5a7a5c" stroke-width="0.7" opacity="0.4"/>
+    <circle cx="44" cy="44" r="28" fill="none" stroke="#8ab88c" stroke-width="0.7" opacity="0.5"/>
+    <circle cx="44" cy="44" r="16" fill="none" stroke="#5a7a5c" stroke-width="0.7" opacity="0.6"/>
+    <circle cx="44" cy="44" r="7" fill="rgba(90,122,92,0.18)" stroke="#5a7a5c" stroke-width="1"/>
+    <line x1="44" y1="4" x2="44" y2="84" stroke="#5a7a5c" stroke-width="0.4" opacity="0.3"/>
+    <line x1="4" y1="44" x2="84" y2="44" stroke="#5a7a5c" stroke-width="0.4" opacity="0.3"/>
+    <line x1="15" y1="15" x2="73" y2="73" stroke="#8ab88c" stroke-width="0.4" opacity="0.3"/>
+    <line x1="73" y1="15" x2="15" y2="73" stroke="#8ab88c" stroke-width="0.4" opacity="0.3"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#5a7a5c" stroke-width="0.7" opacity="0.45"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#5a7a5c" stroke-width="0.7" opacity="0.45" transform="rotate(45 44 44)"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#5a7a5c" stroke-width="0.7" opacity="0.45" transform="rotate(90 44 44)"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#5a7a5c" stroke-width="0.7" opacity="0.45" transform="rotate(135 44 44)"/>
+  </svg>
+  <div class="completion-title">Practice Complete</div>
+  <div class="completion-sub">You moved through 30 minutes of Sun Salutation A. Simple, steady, whole-body.</div>
+  <div class="completion-adilla">— Adilla 😜</div>
+  <button class="completion-btn" style="background:var(--sage)" onclick="resetProgram('ea')">Begin Again</button>
+  <button class="completion-choose-btn" onclick="goToSelect()">Choose Another Program</button>
+</div>
+
+<div class="completion-screen" id="completionScreenEasyB">
+  <svg class="completion-mandala" width="88" height="88" viewBox="0 0 88 88">
+    <circle cx="44" cy="44" r="40" fill="none" stroke="#c4993a" stroke-width="0.7" opacity="0.4"/>
+    <circle cx="44" cy="44" r="28" fill="none" stroke="#e5b84a" stroke-width="0.7" opacity="0.5"/>
+    <circle cx="44" cy="44" r="16" fill="none" stroke="#c4993a" stroke-width="0.7" opacity="0.6"/>
+    <circle cx="44" cy="44" r="7" fill="rgba(196,153,58,0.18)" stroke="#c4993a" stroke-width="1"/>
+    <line x1="44" y1="4" x2="44" y2="84" stroke="#c4993a" stroke-width="0.4" opacity="0.3"/>
+    <line x1="4" y1="44" x2="84" y2="44" stroke="#c4993a" stroke-width="0.4" opacity="0.3"/>
+    <line x1="15" y1="15" x2="73" y2="73" stroke="#e5b84a" stroke-width="0.4" opacity="0.3"/>
+    <line x1="73" y1="15" x2="15" y2="73" stroke="#e5b84a" stroke-width="0.4" opacity="0.3"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#c4993a" stroke-width="0.7" opacity="0.45"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#c4993a" stroke-width="0.7" opacity="0.45" transform="rotate(45 44 44)"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#c4993a" stroke-width="0.7" opacity="0.45" transform="rotate(90 44 44)"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#c4993a" stroke-width="0.7" opacity="0.45" transform="rotate(135 44 44)"/>
+  </svg>
+  <div class="completion-title">Practice Complete</div>
+  <div class="completion-sub">You brought fire and steadiness to 30 minutes of Sun Salutation B. Warrior energy carried.</div>
+  <div class="completion-adilla">— Adilla 😜</div>
+  <button class="completion-btn" style="background:var(--gold)" onclick="resetProgram('eb')">Begin Again</button>
+  <button class="completion-choose-btn" onclick="goToSelect()">Choose Another Program</button>
+</div>
+
+<div class="completion-screen" id="completionScreen">
+  <svg class="completion-mandala" width="88" height="88" viewBox="0 0 88 88">
+    <circle cx="44" cy="44" r="40" fill="none" stroke="#b5633a" stroke-width="0.7" opacity="0.4"/>
+    <circle cx="44" cy="44" r="28" fill="none" stroke="#c4993a" stroke-width="0.7" opacity="0.5"/>
+    <circle cx="44" cy="44" r="16" fill="none" stroke="#5a7a5c" stroke-width="0.7" opacity="0.6"/>
+    <circle cx="44" cy="44" r="7" fill="rgba(181,99,58,0.18)" stroke="#b5633a" stroke-width="1"/>
+    <line x1="44" y1="4" x2="44" y2="84" stroke="#b5633a" stroke-width="0.4" opacity="0.3"/>
+    <line x1="4" y1="44" x2="84" y2="44" stroke="#b5633a" stroke-width="0.4" opacity="0.3"/>
+    <line x1="15" y1="15" x2="73" y2="73" stroke="#c4993a" stroke-width="0.4" opacity="0.3"/>
+    <line x1="73" y1="15" x2="15" y2="73" stroke="#c4993a" stroke-width="0.4" opacity="0.3"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#b5633a" stroke-width="0.7" opacity="0.45"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#b5633a" stroke-width="0.7" opacity="0.45" transform="rotate(45 44 44)"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#b5633a" stroke-width="0.7" opacity="0.45" transform="rotate(90 44 44)"/>
+    <ellipse cx="44" cy="44" rx="5" ry="14" fill="none" stroke="#b5633a" stroke-width="0.7" opacity="0.45" transform="rotate(135 44 44)"/>
+  </svg>
+  <div class="completion-title">Practice Complete</div>
+  <div class="completion-sub">You moved through 60 minutes of breath, flow, and presence.<br>Carry this stillness with you.</div>
+  <div class="completion-adilla">— Adilla &#128537;</div>
+  <button class="completion-btn" onclick="resetSession()">Begin Again</button>
+  <button class="completion-choose-btn" onclick="goToSelect()">Choose Another Program</button>
+</div>
+
+<script>
+
+// ===== PROGRAM SELECTION =====
+let currentProgram = null;
+
+function selectProgram(prog) {
+  currentProgram = prog;
+  document.getElementById('programSelectScreen').classList.add('hidden');
+  document.querySelectorAll('.program-view').forEach(v => v.classList.remove('active'));
+  const view = document.getElementById('view-' + prog);
+  if (view) { view.classList.add('active'); window.scrollTo(0, 0); }
+  // Init the selected program
+  if (prog === 'easy-a') { initEasy('ea'); }
+  else if (prog === 'easy-b') { initEasy('eb'); }
+  else if (prog === 'advanced') { initAdvanced(); }
+}
+
+function goBack() {
+  document.querySelectorAll('.program-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('programSelectScreen').classList.remove('hidden');
+  document.querySelectorAll('.completion-screen').forEach(s => s.classList.remove('show'));
+  window.scrollTo(0, 0);
+  currentProgram = null;
+}
+
+function goToSelect() {
+  goBack();
+}
+
+// ===== EASY PROGRAMS =====
+const eaState = { completed: new Set() };
+const ebState = { completed: new Set() };
+
+function getState(prefix) { return prefix === 'ea' ? eaState : ebState; }
+
+function initEasy(prefix) {
+  const st = getState(prefix);
+  st.completed.clear();
+  try {
+    const s = JSON.parse(localStorage.getItem('adilla_' + prefix) || 'null');
+    if (s && s.completed) s.completed.forEach(n => st.completed.add(n));
+  } catch(e) {}
+  st.completed.forEach(n => applyEasyDone(prefix, n));
+  updateEasyProgress(prefix, 3);
+  for (let i = 1; i <= 3; i++) {
+    if (!st.completed.has(i)) { openSec(prefix, i); break; }
+  }
+}
+
+function openSec(prefix, n) {
+  const c = document.getElementById(prefix + '-sec-' + n);
+  if (c) c.classList.add('open');
+}
+
+function toggleSec(prefix, n) {
+  const c = document.getElementById(prefix + '-sec-' + n);
+  if (!c) return;
+  c.classList.toggle('open');
+}
+
+function completeSec(prefix, n, total) {
+  const st = getState(prefix);
+  st.completed.add(n);
+  const card = document.getElementById(prefix + '-sec-' + n);
+  if (card) {
+    setTimeout(() => { applyEasyDone(prefix, n); }, 300);
+  }
+  updateEasyProgress(prefix, total);
+  saveEasy(prefix);
+  const nx = n + 1;
+  if (nx <= total) {
+    setTimeout(() => {
+      const nc = document.getElementById(prefix + '-sec-' + nx);
+      if (nc) { nc.classList.add('open'); setTimeout(() => nc.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }
+    }, 500);
+  }
+  if (st.completed.size === total) {
+    const screenId = prefix === 'ea' ? 'completionScreenEasyA' : 'completionScreenEasyB';
+    setTimeout(() => document.getElementById(screenId).classList.add('show'), 800);
+  }
+}
+
+function applyEasyDone(prefix, n) {
+  const c = document.getElementById(prefix + '-sec-' + n);
+  if (!c) return;
+  c.classList.add('completed');
+  const btn = c.querySelector('.complete-btn');
+  if (btn) btn.textContent = '✓ Complete';
+}
+
+function updateEasyProgress(prefix, total) {
+  const st = getState(prefix);
+  const pct = Math.round(st.completed.size / total * 100);
+  const fill = document.getElementById(prefix + '-progressFill');
+  const pctEl = document.getElementById(prefix + '-progressPct');
+  const countEl = document.getElementById(prefix + '-completedCount');
+  if (fill) { fill.style.width = pct + '%'; }
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (countEl) countEl.textContent = st.completed.size + ' / ' + total;
+}
+
+function saveEasy(prefix) {
+  const st = getState(prefix);
+  try { localStorage.setItem('adilla_' + prefix, JSON.stringify({ completed: [...st.completed] })); } catch(e) {}
+}
+
+function resetProgram(prefix) {
+  const st = getState(prefix);
+  st.completed.clear();
+  try { localStorage.removeItem('adilla_' + prefix); } catch(e) {}
+  const screenId = prefix === 'ea' ? 'completionScreenEasyA' : 'completionScreenEasyB';
+  document.getElementById(screenId).classList.remove('show');
+  const view = document.getElementById('view-' + (prefix === 'ea' ? 'easy-a' : 'easy-b'));
+  view.querySelectorAll('.section-card').forEach(c => c.classList.remove('completed', 'open'));
+  view.querySelectorAll('.complete-btn').forEach(b => b.textContent = 'Mark Complete ✓');
+  view.querySelectorAll('.round-dot').forEach(d => d.classList.remove('done'));
+  view.querySelectorAll('.step').forEach(s => s.classList.remove('done'));
+  updateEasyProgress(prefix, 3);
+  openSec(prefix, 1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleRound(el) { el.classList.toggle('done'); }
+
+// ===== ADVANCED (original) =====
+const TOTAL = 7; let completed = new Set();
+function initAdvanced() {
+  completed.clear();
+  try { const s = JSON.parse(localStorage.getItem('adilla_v1') || 'null'); if (s && s.completed) s.completed.forEach(n => completed.add(n)); } catch(e) {}
+  completed.forEach(n => applyDone(n));
+  restoreSteps();
+  updateProgress();
+  for (let i = 1; i <= TOTAL; i++) { if (!completed.has(i)) { open(i); break; } }
+}
+function open(n) { const c = document.getElementById('sec-' + n); if (c) c.classList.add('open'); }
+function toggleSection(n) { const c = document.getElementById('sec-' + n); if (!c) return; c.classList.toggle('open'); }
+function toggleStep(el) { el.classList.toggle('done'); saveSteps(); }
+function completeSection(n) {
+  completed.add(n);
+  const card = document.getElementById('sec-' + n);
+  if (card) { setTimeout(() => { applyDone(n); }, 300); } else { applyDone(n); }
+  updateProgress(); save();
+  const nx = n + 1;
+  if (nx <= TOTAL) { setTimeout(() => { const nc = document.getElementById('sec-' + nx); if (nc) { nc.classList.add('open'); setTimeout(() => nc.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); } }, 600); }
+  if (completed.size === TOTAL) { setTimeout(() => document.getElementById('completionScreen').classList.add('show'), 900); }
+}
+function applyDone(n) { const c = document.getElementById('sec-' + n); if (!c) return; c.classList.add('completed'); const btn = c.querySelector('.complete-btn'); if (btn) btn.textContent = '✓ Complete'; }
+function updateProgress() {
+  const pct = Math.round(completed.size / TOTAL * 100);
+  const fill = document.getElementById('progressFill');
+  if (fill) { fill.style.width = pct + '%'; }
+  const pctEl = document.getElementById('progressPct');
+  if (pctEl) pctEl.textContent = pct + '%';
+  const cEl = document.getElementById('completedCount');
+  if (cEl) cEl.textContent = completed.size + ' / ' + TOTAL;
+}
+function save() { try { localStorage.setItem('adilla_v1', JSON.stringify({ completed: [...completed] })); } catch(e) {} }
+function saveSteps() {
+  const view = document.getElementById('view-advanced');
+  if (!view) return;
+  const s = [...view.querySelectorAll('.step')].map(s => s.classList.contains('done') ? 1 : 0);
+  try { localStorage.setItem('adilla_steps', JSON.stringify(s)); } catch(e) {}
+}
+function restoreSteps() {
+  try {
+    const s = JSON.parse(localStorage.getItem('adilla_steps') || '[]');
+    const view = document.getElementById('view-advanced');
+    if (!view) return;
+    const st = view.querySelectorAll('.step');
+    s.forEach((v, i) => { if (v && st[i]) st[i].classList.add('done'); });
+  } catch(e) {}
+}
+function resetSession() {
+  completed.clear();
+  try { localStorage.removeItem('adilla_v1'); localStorage.removeItem('adilla_steps'); } catch(e) {}
+  document.getElementById('completionScreen').classList.remove('show');
+  const view = document.getElementById('view-advanced');
+  view.querySelectorAll('.section-card').forEach(c => c.classList.remove('completed', 'open'));
+  view.querySelectorAll('.complete-btn').forEach(b => { if (b.closest('#sec-7')) b.textContent = 'Complete Session ✓'; else b.textContent = 'Mark Complete ✓'; });
+  view.querySelectorAll('.step').forEach(s => s.classList.remove('done'));
+  updateProgress(); open(1); window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== BREATH GUIDE =====
+let bRunning = false, bTimer = null, bPhase = 0;
+const phases = [{ name: 'Inhale', dur: 4, scale: 1.28 }, { name: 'Hold', dur: 4, scale: 1.28 }, { name: 'Exhale', dur: 4, scale: .82 }, { name: 'Hold', dur: 4, scale: .82 }];
+function openBreath() { document.getElementById('breathModal').classList.add('open'); }
+function closeBreath() { stopBreath(); document.getElementById('breathModal').classList.remove('open'); }
+function toggleBreath() { if (bRunning) stopBreath(); else startBreath(); }
+function startBreath() { bRunning = true; bPhase = 0; document.getElementById('breathPlayBtn').textContent = 'Stop'; runPhase(); }
+function stopBreath() { bRunning = false; if (bTimer) clearTimeout(bTimer); document.getElementById('breathPlayBtn').textContent = 'Start'; document.getElementById('breathPhase').textContent = 'Ready'; document.getElementById('breathCount').textContent = '4'; document.getElementById('breathCircle').style.transform = ''; }
+function runPhase() {
+  if (!bRunning) return;
+  const p = phases[bPhase % phases.length];
+  document.getElementById('breathPhase').textContent = p.name;
+  document.getElementById('breathCircle').style.transition = `transform ${p.dur * .88}s ease-in-out`;
+  document.getElementById('breathCircle').style.transform = `scale(${p.scale})`;
+  let n = p.dur;
+  document.getElementById('breathCount').textContent = n;
+  function tick() { if (!bRunning) return; n--; if (n > 0) { document.getElementById('breathCount').textContent = n; bTimer = setTimeout(tick, 1000); } else { bPhase++; bTimer = setTimeout(runPhase, 150); } }
+  bTimer = setTimeout(tick, 1000);
+}
+
+</script>
+</body>
+</html>
